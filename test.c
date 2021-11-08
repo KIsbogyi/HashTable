@@ -62,7 +62,7 @@ void test(Strazsa *s, char *szo){
 	uj->key = szo[0];
 	uj->kov = mozgo->elozo;
 	uj->kov = mozgo;
-	initLordHelmet(uj);
+
 
 	mozgo->elozo->kov = uj;
 
