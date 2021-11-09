@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include "debugmalloc.h"
+#include "debugmalloc.h"
 typedef struct ListaElem{
 	char key;
 	struct ListaElem *kov, *elozo;
@@ -50,7 +50,7 @@ void kiir(Strazsa *s){
 		printf("[%c] ", mozgo->key);
 		LordHelmet *futtato = mozgo->kezdo->kov;
 		while(futtato != mozgo->vegzo){
-			printf("%s", futtato->szoveg);
+			printf("%s, ", futtato->szoveg);
 			futtato = futtato->kov;
 		}
 		mozgo = mozgo->kov;
@@ -79,16 +79,23 @@ void test(Strazsa *s, char *szo){
 	while(mozgo != s->vege && mozgo->key < szo[0]){
 		mozgo = mozgo->kov;
 	}
-	ListaElem *uj = (ListaElem *)malloc(sizeof(ListaElem));
-	uj->key = szo[0];
-	uj->elozo = mozgo->elozo;
-	uj->kov = mozgo;
 	
-	initLordHelmet(uj);
-	insertLordHelmet(uj, szo);
+	if((mozgo->key) != szo[0]){
+		ListaElem *uj = (ListaElem *)malloc(sizeof(ListaElem));
+		uj->key = szo[0];
+		uj->elozo = mozgo->elozo;
+		uj->kov = mozgo;
 
-	mozgo->elozo->kov = uj;
-	mozgo->elozo = uj;
+	
+		initLordHelmet(uj);
+		insertLordHelmet(uj, szo);
+
+		mozgo->elozo->kov = uj;
+		mozgo->elozo = uj;
+	}
+	else{
+	insertLordHelmet(mozgo,szo);
+	}
 
 }
 
@@ -114,9 +121,11 @@ void szabaditsfel(Strazsa *s){
 int main(void){
 	Strazsa s;
 	init(&s);
+	test(&s, "geza");
 	test(&s, "alma");
 	test(&s, "kapa");
 	test(&s, "kari");
+	test(&s, "alpesi");
 	kiir(&s);
 	szabaditsfel(&s);
 	return 0;
