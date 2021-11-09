@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "debugmalloc.h"
+//#include "debugmalloc.h"
 typedef struct ListaElem{
 	char key;
 	struct ListaElem *kov, *elozo;
-	struct LordHelmet *elso, *vege;
+	struct LordHelmet *kezdo, *vegzo;
 }ListaElem;
 
 typedef struct LordHelmet{
@@ -39,38 +39,70 @@ void initLordHelmet(ListaElem *l){
 	lo1->kov = lo2;
 	lo2->elozo = lo1;
 
-	l->elso = lo1;
-	l->vege = lo2;
+	l->kezdo = lo1;
+	l->vegzo = lo2;
 }
 
 
 void kiir(Strazsa *s){
 	ListaElem *mozgo = s->elso->kov;
 	while(mozgo != s->vege){
-		printf("[%c]\n", mozgo->key);
+		printf("[%c] ", mozgo->key);
+		LordHelmet *futtato = mozgo->kezdo->kov;
+		while(futtato != mozgo->vegzo){
+			printf("%s", futtato->szoveg);
+			futtato = futtato->kov;
+		}
 		mozgo = mozgo->kov;
 	}
 }
 
+void insertLordHelmet(ListaElem *s, char *szo){
+        LordHelmet *mozgo = s->kezdo->kov;
+        while(mozgo != s->vegzo && mozgo->szoveg != szo){
+                mozgo = mozgo->kov;
+        }
+
+        LordHelmet *uj = (LordHelmet *)malloc(sizeof(LordHelmet));
+        uj->szoveg = szo;
+        uj->elozo = mozgo->elozo;
+        uj->kov = mozgo;
+
+        mozgo->elozo->kov = uj;
+        mozgo->elozo = uj;
+
+}
+
+
 void test(Strazsa *s, char *szo){
 	ListaElem *mozgo = s->elso->kov;
-	while(mozgo != s->vege && mozgo->key < szo[0] ){
+	while(mozgo != s->vege && mozgo->key < szo[0]){
 		mozgo = mozgo->kov;
 	}
-	
 	ListaElem *uj = (ListaElem *)malloc(sizeof(ListaElem));
 	uj->key = szo[0];
-	uj->kov = mozgo->elozo;
+	uj->elozo = mozgo->elozo;
 	uj->kov = mozgo;
-
+	
+	initLordHelmet(uj);
+	insertLordHelmet(uj, szo);
 
 	mozgo->elozo->kov = uj;
+	mozgo->elozo = uj;
 
 }
 
 void szabaditsfel(Strazsa *s){
 	ListaElem *mozgo = s->elso->kov;
 	while (mozgo != s->vege){
+		LordHelmet *futtato = mozgo->kezdo->kov;
+		while(futtato != mozgo->vegzo){
+			LordHelmet *temp = futtato->kov;
+			free(futtato);
+			futtato = temp;
+		}
+		free(mozgo->kezdo);
+		free(mozgo->vegzo);
 		ListaElem *tmp = mozgo->kov;
 		free(mozgo);
 		mozgo = tmp;
@@ -84,6 +116,7 @@ int main(void){
 	init(&s);
 	test(&s, "alma");
 	test(&s, "kapa");
+	test(&s, "kari");
 	kiir(&s);
 	szabaditsfel(&s);
 	return 0;
