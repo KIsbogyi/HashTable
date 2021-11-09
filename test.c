@@ -118,14 +118,35 @@ void szabaditsfel(Strazsa *s){
 	free(s->vege);
 }
 
+void megkeres(Strazsa *s, char *szo){
+        ListaElem *mozgo = s->elso->kov;
+        while(mozgo != s->vege){
+		printf("fo\n");
+		if (mozgo->key == szo[0]){
+	       		LordHelmet *futtato = mozgo->kezdo->kov;
+                	while(futtato != mozgo->vegzo){
+				printf("mellek\n");
+				if (futtato->szoveg == szo){
+                        		printf("%s, ", futtato->szoveg);
+				}
+                        	futtato = futtato->kov;
+                	}
+		}
+                mozgo = mozgo->kov;
+        }
+}
+
+
 int main(void){
 	Strazsa s;
 	init(&s);
 	test(&s, "geza");
 	test(&s, "alma");
+	test(&s, "agyag");
 	test(&s, "kapa");
 	test(&s, "kari");
 	test(&s, "alpesi");
+	megkeres(&s, "kari");
 	kiir(&s);
 	szabaditsfel(&s);
 	return 0;
