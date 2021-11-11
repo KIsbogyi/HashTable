@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "debugmalloc.h"
 typedef struct ListaElem{
@@ -118,16 +119,63 @@ void szabaditsfel(Strazsa *s){
 	free(s->vege);
 }
 
-void megkeres(Strazsa *s, char *szo){
+bool megkeres(Strazsa *s, char *szo){
         ListaElem *mozgo = s->elso->kov;
         while(mozgo != s->vege){
-		printf("fo\n");
 		if (mozgo->key == szo[0]){
 	       		LordHelmet *futtato = mozgo->kezdo->kov;
                 	while(futtato != mozgo->vegzo){
-				printf("mellek\n");
 				if (futtato->szoveg == szo){
-                        		printf("%s, ", futtato->szoveg);
+					return true;
+				}
+                        	futtato = futtato->kov;
+                	}
+		}
+                mozgo = mozgo->kov;
+        }
+	return false;
+}
+
+
+void keytorlo(Strazsa *s, char *szo){
+	ListaElem *mozgo = s->elso->kov;
+	ListaElem *tmp;
+        while(mozgo != s->vege){
+		if (mozgo->key == szo[0]){
+	       		LordHelmet *futtato = mozgo->kezdo->kov;
+			if (futtato == mozgo->vegzo){
+				mozgo->elozo->kov = mozgo->kov;
+				mozgo->kov->elozo = mozgo->elozo;
+				printf("%c", mozgo->key);
+				tmp = mozgo->kov;
+				free(mozgo->vegzo);
+				free(mozgo->kezdo);	
+				free(mozgo);
+			}
+			else{
+				tmp = mozgo->kov;
+			}
+		}
+		else{
+		tmp = mozgo->kov;
+
+		}
+                mozgo = tmp;
+        }
+}
+
+
+void torol(Strazsa *s, char *szo){
+        ListaElem *mozgo = s->elso->kov;
+        while(mozgo != s->vege){
+		if (mozgo->key == szo[0]){
+	       		LordHelmet *futtato = mozgo->kezdo->kov;
+                	while(futtato != mozgo->vegzo){
+				if (futtato->szoveg == szo){
+					futtato->elozo->kov = futtato->kov;
+					futtato->kov->elozo = futtato->elozo;
+					free(futtato);
+					break;
 				}
                         	futtato = futtato->kov;
                 	}
@@ -137,6 +185,11 @@ void megkeres(Strazsa *s, char *szo){
 }
 
 
+void deleter(Strazsa *s, char *szo){
+	torol(s, szo);
+	keytorlo(s, szo);
+}
+
 int main(void){
 	Strazsa s;
 	init(&s);
@@ -145,9 +198,14 @@ int main(void){
 	test(&s, "agyag");
 	test(&s, "kapa");
 	test(&s, "kari");
-	test(&s, "alpesi");
-	megkeres(&s, "kari");
+	test(&s, "alpesi");		//TODO: kihasznalni a duplan lancolt listat
+	test(&s, "gagyi"); 		//TODO: abc sorrend a vödrös hashben
+	kiir(&s);			//TODO: ","-t kivenni a felsorolas vegen
+	deleter(&s, "geza");
+	deleter(&s, "gagyi");
+	printf("\n");
 	kiir(&s);
+	printf("\n%d", megkeres(&s, "kari")); 
 	szabaditsfel(&s);
 	return 0;
 }
