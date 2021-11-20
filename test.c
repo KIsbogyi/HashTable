@@ -3,23 +3,7 @@
 #include <stdbool.h>
 
 #include "debugmalloc.h"
-typedef struct ListaElem{
-	char key;
-	struct ListaElem *kov, *elozo;
-	struct LordHelmet *kezdo, *vegzo;
-}ListaElem;
-
-typedef struct LordHelmet{
-	char *szoveg;
-	struct LordHelmet *kov, *elozo;
-}LordHelmet;
-
-
-
-typedef struct Strazsa{
-	ListaElem *elso;
-	ListaElem *vege;
-}Strazsa;
+#include "datastructure.h"
 
 
 void init(Strazsa *s){
@@ -125,7 +109,7 @@ bool megkeres(Strazsa *s, char *szo){
 		if (mozgo->key == szo[0]){
 	       		LordHelmet *futtato = mozgo->kezdo->kov;
                 	while(futtato != mozgo->vegzo){
-				if (futtato->szoveg == szo){
+				if (strcmp(futtato->szoveg, szo) == 0){
 					return true;
 				}
                         	futtato = futtato->kov;
@@ -146,7 +130,6 @@ void keytorlo(Strazsa *s, char *szo){
 			if (futtato == mozgo->vegzo){
 				mozgo->elozo->kov = mozgo->kov;
 				mozgo->kov->elozo = mozgo->elozo;
-				printf("%c", mozgo->key);
 				tmp = mozgo->kov;
 				free(mozgo->vegzo);
 				free(mozgo->kezdo);	
@@ -171,7 +154,7 @@ void torol(Strazsa *s, char *szo){
 		if (mozgo->key == szo[0]){
 	       		LordHelmet *futtato = mozgo->kezdo->kov;
                 	while(futtato != mozgo->vegzo){
-				if (futtato->szoveg == szo){
+				if (strcmp(futtato->szoveg, szo) == 0){
 					futtato->elozo->kov = futtato->kov;
 					futtato->kov->elozo = futtato->elozo;
 					free(futtato);
@@ -190,6 +173,7 @@ void deleter(Strazsa *s, char *szo){
 	keytorlo(s, szo);
 }
 
+/*
 int main(void){
 	Strazsa s;
 	init(&s);
@@ -209,3 +193,5 @@ int main(void){
 	szabaditsfel(&s);
 	return 0;
 }
+*/
+
