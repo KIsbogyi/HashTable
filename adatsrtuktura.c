@@ -24,6 +24,7 @@ bool search(Sentry **lista,char * word){
 		if(strcmp(iter->data, word) == 0){
 			return true;
 		}
+		iter = iter->next;
 	}
 	return false;
 }
@@ -87,7 +88,7 @@ void deleter(Sentry **lista, char *word){
 
 
 void writer(Sentry **lista, int size){
-	for (int i = 0; i < size; i++){
+	for(int i = 0; i < size; i++){
 		Node *iter = lista[i]->first->next;
 		while(iter != lista[i]->last){
 			printf("%s\n",iter->data);

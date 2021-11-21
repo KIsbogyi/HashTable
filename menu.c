@@ -38,6 +38,7 @@ int main(void){
 			case 1:
                                 printf("Mit szeretnel a struktaraban megkeresni?\n");
                                 inp = reader();
+				printf("%s\n\n", inp);
 				printf("%d\n",search(lista, inp));
 				break;
 	
@@ -56,7 +57,9 @@ int main(void){
 				break;
 		
 			case 4:
-				printf("4");
+				printf("Melyik fileba akarsz kiirni?\n");
+				inp = reader();
+				fwriter(inp, lista, 256);
 				break;
 	
 			case 5:
