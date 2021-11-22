@@ -31,19 +31,28 @@ bool search(Sentry **lista,char * word){
 
 
 
-void adder(Sentry **list, char *string){
-	int i = string[0];
-	Node *iter = list[i]->first->next;
-	Node *prev = list[i]->first;
-	while(iter != list[i]->last){
-		prev = iter;
-		iter = iter->next;
-	}
+int adder(Sentry **list, char *string){
+	if(search(list, string) == 0){
+		int i = string[0];
+		Node *iter = list[i]->first->next;
+		Node *prev = list[i]->first;
+		while(iter != list[i]->last){
+			prev = iter;
+			iter = iter->next;
+		}
 	
-	Node *neue = (Node *)malloc(sizeof(Node));
-	neue->data = string;
-	neue->next = iter;
-	prev->next = neue;
+		Node *neue = (Node *)malloc(sizeof(Node));
+		if(neue == NULL){
+			return 2;
+		}
+		neue->data = string;
+		neue->next = iter;
+		prev->next = neue;
+		return 0;
+	}
+	else{
+		return 1;
+	}
 	
 }
 
@@ -90,8 +99,14 @@ void deleter(Sentry **lista, char *word){
 void writer(Sentry **lista, int size){
 	for(int i = 0; i < size; i++){
 		Node *iter = lista[i]->first->next;
+		if(iter != lista[i]->last){
+			printf("\n[%c]",i);
+		}
 		while(iter != lista[i]->last){
-			printf("%s\n",iter->data);
+			printf(" %s",iter->data);
+			if(iter->next->next == lista[i]->last){
+				printf(",");
+			}
 			iter = iter->next;
 		}
 	}

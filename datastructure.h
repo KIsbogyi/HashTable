@@ -15,7 +15,7 @@ typedef struct Sentry{
 }Sentry;
 
 Sentry *init(void);
-void adder(Sentry **list, char *string);
+int adder(Sentry **list, char *string);
 void freeer(Sentry *s);
 void freeall(Sentry **lista, int meret);
 bool search(Sentry **lista, char *word);

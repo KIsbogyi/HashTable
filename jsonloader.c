@@ -7,14 +7,24 @@
 
 
 void loader(Sentry **lista,char *name){
+	sprintf(name, "%s.json",name);
 	FILE *fp = fopen(name, "rt");
+	if(fp == NULL){
+		perror("Nem sikerult a file beolvasasa ");
+	}
+	else{
 	int size = 2;						//first char + \0
 	char *stream = (char *)malloc(size * sizeof(char));
+	if(stream == NULL){
+		printf("A memoriafoglalas nem sikerult!\n");
+		return;
+	}
+	sprintf(stream, "%s", "");
 
 	char c = fgetc(fp);
 	if (c != '{'){
-		stream[0] = c;
-		stream[0+1] = '\0';
+		printf("A file rossz formatumu!\n");
+		return;
 	}
 	while (1){
 		c = fgetc(fp);
@@ -24,17 +34,27 @@ void loader(Sentry **lista,char *name){
 		if (c != '{' && c != '}' && c != '"' && c != ' ' && c != '\n'){
 			size ++;
 			stream = (char *)realloc(stream, size * sizeof(char));
-			stream[strlen(stream)] = c;
-			stream[strlen(stream)+1] = '\0';
+			if(stream == NULL){
+				printf("A memoriafoglalas nem sikerult!\n");
+				return;
+			}
+			int len = strlen(stream);
+			stream[len] = c;
+			stream[len+1] = '\0';
 		}
 	}
 
 
-	char **data = (char**)malloc(100 * sizeof(char*));
+	char **data = (char **)malloc(1 * sizeof(char*));		
+	if(data == NULL){
+		printf("A memoriafoglalas nem sikerult!\n");
+		return;
+	}
 	int counter = 0;
 	char *token = strtok(stream, ",");
 
 	while(token != NULL){
+		data = (char **)realloc(data, (counter+1)*sizeof(char*));
 		data[counter] = token;
 		counter ++;
 		token = strtok(NULL, ",");
@@ -59,10 +79,15 @@ void loader(Sentry **lista,char *name){
 		}
 	}
 	fclose(fp);
+	printf("A file beolvasasa sikerult!\n");
+	}
 }
 
 void fwriter(char *file, Sentry **lista, int size){
 	char *test = (char *)malloc(sizeof(char)*2);
+	if(test == NULL){
+		printf("Memoriafoglalas nem sikerult!\n");
+	}
 	sprintf(test, "%s", "{");
 	for(int i = 0; i < size; i++){
 		Node *iter = lista[i]->first->next;
@@ -75,8 +100,12 @@ void fwriter(char *file, Sentry **lista, int size){
 		}
 	}
 
-	test[strlen(test)-2] = '}';	
+	test[strlen(test)-2] = '}';
+	sprintf(file, "%s.json", file);	
 	FILE *fp = fopen(file, "wt");
+	if(fp == NULL){
+		perror("Nem sikerult megnyitni a filet!\n");
+	}
 	fprintf(fp, "%s", test);
 	fclose(fp);
 
