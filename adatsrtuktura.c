@@ -2,10 +2,10 @@
 #include <stdlib.h>
 
 #include "debugmalloc.h"
-#include "datastructure.h"
+#include "adatstruktura.h"
 
-Sentry *init(void){
-	Sentry *s = (Sentry *)malloc(sizeof(Sentry));
+sentinel *init(void){
+	sentinel *s = (sentinel *)malloc(sizeof(sentinel));
 	Node *first = (Node *)malloc(sizeof(Node));
 	Node *last = (Node *)malloc(sizeof(Node));
 
@@ -17,7 +17,7 @@ Sentry *init(void){
 }
 
 
-bool search(Sentry **lista,char * word){
+bool search(sentinel **lista,char * word){
 	int i = word[0];
 	Node *iter = lista[i]->first->next;
 	while (iter != lista[i]->last){
@@ -29,9 +29,7 @@ bool search(Sentry **lista,char * word){
 	return false;
 }
 
-
-
-int adder(Sentry **list, char *string){
+int adder(sentinel **list, char *string){
 	if(search(list, string) == 0){
 		int i = string[0];
 		Node *iter = list[i]->first->next;
@@ -40,7 +38,7 @@ int adder(Sentry **list, char *string){
 			prev = iter;
 			iter = iter->next;
 		}
-	
+
 		Node *neue = (Node *)malloc(sizeof(Node));
 		if(neue == NULL){
 			return 2;
@@ -53,39 +51,41 @@ int adder(Sentry **list, char *string){
 	else{
 		return 1;
 	}
-	
+
 }
 
 
 
-void freeer(Sentry *s){
+void freeer(sentinel *s){
 	Node *iter = s->first->next;
 	while (iter != s->last){
 		Node *tmp = iter->next;
+		free(iter->data);
 		free(iter);
 		iter = tmp;
 	}
 }
 
 
-void freeall(Sentry **lista,int size){
+void freeall(sentinel **lista,int size){
 	for(int i = 0; i < size; i++){
 		freeer(lista[i]);
 		free(lista[i]->first);
 		free(lista[i]->last);
 		free(lista[i]);
 	}
-	
+
 }
 
 
-void deleter(Sentry **lista, char *word){
+void deleter(sentinel **lista, char *word){
 	int i = word[0];
 	Node *iter = lista[i]->first->next;
 	Node *prev = lista[i]->first;
 	while(iter != lista[i]->last){
 		if(strcmp(iter->data, word) == 0){
 			Node *tmp = iter->next;
+			free(iter->data);
 			free(iter);
 			prev->next = tmp;
 			return;
@@ -96,7 +96,8 @@ void deleter(Sentry **lista, char *word){
 }
 
 
-void writer(Sentry **lista, int size){
+
+void writer(sentinel **lista, int size){
 	for(int i = 0; i < size; i++){
 		Node *iter = lista[i]->first->next;
 		if(iter != lista[i]->last){
@@ -113,22 +114,16 @@ void writer(Sentry **lista, int size){
 }
 
 
-/*
-int main(void){
-	Sentry *lista[256];
-	//Sentry *lista(Sentry*)malloc(256 *sizeof(sentry*))
-
-	for(int i = 0; i < 256; i++){
-		lista[i] = init();	
+void purger(sentinel **lista, int size){
+	for(int i = 0; i < size; i++){
+		Node *iter = lista[i]->first->next;
+		if(iter != lista[i]->last){
+		}
+		while(iter != lista[i]->last){
+			Node *tmp = iter->next;
+			deleter(lista, iter->data);
+			iter = tmp;
+		}
 	}
 
-	adder(lista, "alma");
-	adder(lista, "agy");
-	deleter(lista, "agy");
-	printf("%d\n", search(lista, "kapa"));
-	writer(lista, 256);
-	freeall(lista, 256);	
-	return 0;
 }
-*/
-
