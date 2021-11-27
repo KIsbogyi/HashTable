@@ -5,42 +5,53 @@
 #include "debugmalloc.h"
 #include "jsonloader.h"
 
+typedef struct ret{
+	int error;
+	char *stream;
+}ret;
 
-int loader(sentinel **lista,char *name){
-	strcat(name, ".json");
-	FILE *fp = fopen(name, "rt");
-	if(fp == NULL){
-		return 1;
-	}
-	else{
-	int size = 2;						//first char + \0
-	char *stream = (char *)malloc(size * sizeof(char));
-	if(stream == NULL){
-		return 2;
-	}
-	sprintf(stream, "%s", "");
 
-	char c = fgetc(fp);
-	if (c != '{'){
-		return 1;
-	}
-	while (1){
-		c = fgetc(fp);
-		if (feof(fp)){
-			break;
-		}
-		if (c != '{' && c != '}' && c != '"' && c != ' ' && c != '\n'){
-			size ++;
-			stream = (char *)realloc(stream, size * sizeof(char));
-			if(stream == NULL){
-				return 2;
-			}
-			int len = strlen(stream);
-			stream[len] = c;
-			stream[len+1] = '\0';
-		}
-	}
 
+int freader(char **string, char *name) {
+    strcat(name, ".json");
+    FILE *fp = fopen(name, "rt");
+    if (fp == NULL) {
+        return 1;
+    } else {
+        int size = 2;           					//first char + \0
+	char *stream = (char *)malloc(2 * sizeof(char));
+        if (stream == NULL) {
+            return 2;
+        }
+        sprintf(stream, "%s", "");
+
+        char c = fgetc(fp);
+        if (c != '{') {
+            return 1;
+        }
+        while (1) {
+            c = fgetc(fp);
+            if (feof(fp)) {
+                break;
+            }
+            if (c != '{' && c != '}' && c != '"' && c != ' ' && c != '\n') {
+                size++;
+                stream = (char *) realloc(stream, size * sizeof(char));
+                if (stream == NULL) {
+                    return 2;
+                }
+                int len = strlen(stream);
+                stream[len] = c;
+                stream[len + 1] = '\0';
+            }
+        }
+        fclose(fp);
+    	*string = stream; 
+    }
+    return 0;
+}
+
+int dataprocession(char *stream, sentinel **lista){
 	char **data = (char **)malloc(1 * sizeof(char*));
 	if(data == NULL){
 		return 2;
@@ -77,10 +88,17 @@ int loader(sentinel **lista,char *name){
 	}
 	free(stream);
 	free(data);
-	fclose(fp);
-	}
 	return 0;
 
+}
+
+int loader(sentinel **lista, char *name){
+	char **stream = (char **)malloc(sizeof(char*)*1);
+	int error;
+	error = freader(stream, name);
+	error = dataprocession(*stream, lista);
+	free(stream);
+	return error;
 }
 
 int fwriter(char *file, sentinel **lista, int size){
