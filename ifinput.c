@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+#include "debugmalloc.h"
 #include "ifinput.h"
 
 char *reader(void){

@@ -2,8 +2,9 @@
 
 #define JSONLOADER_H
 
-#include "datastructure.h"
-void loader(Sentry **lista,char *name);
-void fwriter(char *file, Sentry **lista, int size);
-
+#include "adatstruktura.h"
+int loader(sentinel **lista,char *name);
+int fwriter(char *file, sentinel **lista, int size);
+int freader(char **stream, char *name);
+int dataprocession(char *stream, sentinel **lista);
 #endif
